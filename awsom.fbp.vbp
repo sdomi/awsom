@@ -5,7 +5,6 @@ Class=JsonBag; JsonBag.cls
 Object={BEC61919-E6C4-11D1-BE7D-C63815000000}#1.0#0; FLEXWIZ.OCX
 Form=awsomPost.frm
 Form=loginform.frm
-Module=Module1; Module1.bas
 IconForm="awsom"
 Startup="awsom"
 HelpFile=""

@@ -65,9 +65,9 @@ Private Sub Command1_Click()
         Set token_s = token_t.OpenAsTextStream(1, -2)
         token_read = token_s.ReadLine
         Set instance_ = CreateObject("Scripting.FileSystemObject")
-        Set instance_t = token.GetFile(path & "\instance.txt")
-        Set instance_s = token_t.OpenAsTextStream(1, -2)
-        instance = token_s.ReadLine
+        Set instance_t = instance_.GetFile(path & "\instance.txt")
+        Set instance_s = instance_t.OpenAsTextStream(1, -2)
+        instance = instance_s.ReadLine
         Dim hProcess As Long
         Dim lExit
         Status = Shell(path & "\curl.exe --cacert " & path & "cacert.pem --header ""Authorization: Bearer " & token_read & """ --data ""status=" & Text1.Text & """ https://" & instance & "/api/v1/statuses -o c:/projects/awsom/data", vbHide)

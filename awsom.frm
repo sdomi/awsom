@@ -71,7 +71,6 @@ Attribute VB_Exposed = False
 ' - dynamic toot height (it's fixed-height, just a matter of measuring the lenght and adding it to an offset
 ' - related to ^, VScroll1 is fixed as opposed to dynamic
 ' - some bleroma posts show up as post before them
-' - like button is broken
 
 
 
