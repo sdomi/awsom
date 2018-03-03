@@ -70,7 +70,7 @@ Private Sub Command1_Click()
         instance = instance_s.ReadLine
         Dim hProcess As Long
         Dim lExit
-        Status = Shell(path & "\curl.exe --cacert " & path & "cacert.pem --header ""Authorization: Bearer " & token_read & """ --data ""status=" & Text1.Text & """ https://" & instance & "/api/v1/statuses -o c:/projects/awsom/data", vbHide)
+        Status = Shell(path & "\curl.exe --cacert " & path & "\cacert.pem --header ""Authorization: Bearer " & token_read & """ --data ""status=" & Text1.Text & """ https://" & instance & "/api/v1/statuses -o " & path & "\data", vbHide)
         hProcess = OpenProcess(&H400, False, Status)
         
         Do
