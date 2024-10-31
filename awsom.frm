@@ -1,5 +1,7 @@
 VERSION 5.00
 Begin VB.Form awsom 
+   Appearance      =   0  'Flat
+   BackColor       =   &H80000005&
    Caption         =   "notSoAwsom"
    ClientHeight    =   5415
    ClientLeft      =   60
@@ -44,11 +46,11 @@ Begin VB.Form awsom
       End
    End
    Begin VB.VScrollBar VScroll1 
-      Height          =   5175
-      Left            =   3600
+      Height          =   5415
+      Left            =   3720
       Max             =   1000
       TabIndex        =   0
-      Top             =   120
+      Top             =   0
       Width           =   255
    End
 End
@@ -57,84 +59,79 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-' awsom, the vb6 mastodon client
-' created by reds, 2018
+Option Explicit
+Dim old As Integer
+Dim magic As Integer
+Dim msgUserName() As Object, msgText() As Object, msgLike() As Object
+Dim alreadydefined As Boolean ' this will break stuff in the future
+Public postNo As Integer
+Dim Status, hProcess As Long
+Dim lExit, token_t, token_s, token_read, data_api_object, data_api_file, _
+    data_api_readfile, userName, content, JB, read, token, instance, path, _
+    instance_t, instance_s, instance_
 
-' Currently, the code below is very messy and shouldn't
-' be looked at. It'll get nicer later on.
-' Happy hacking, I guess?
+Dim apiClient As API
 
-' Currently broken:
-' - scrolling
-' - &apos, and a few others
-' - displaying multi-lined toots (you can send them tho)
-' - dynamic toot height (it's fixed-height, just a matter of measuring the lenght and adding it to an offset
-' - related to ^, VScroll1 is fixed as opposed to dynamic
-' - some bleroma posts show up as post before them
+Private Declare Function OpenProcess _
+            Lib "kernel32" _
+            (ByVal dwDesiredAccess As Long, _
+            ByVal bInheritHandle As Long, _
+            ByVal dwProcessId As Long) As Long
+Private Declare Function GetExitCodeProcess Lib "kernel32" (ByVal hProcess As Long, lpexitcode As Long) As Long
 
+Private Sub Form_Load()
+    path = App.path
+    magic = 0
+    With VScroll1
+        .Height = Me.ScaleHeight - 200
+        .Min = 0
+        .Max = 20000
+        .SmallChange = Screen.TwipsPerPixelY * 10
+        .LargeChange = .SmallChange
+    End With
+End Sub
 
+Sub newItemSet(loops As Integer)
+    While loops > 0
+        If Not alreadydefined Then
+            ReDim Preserve msgUserName(postNo)
+            Set msgUserName(postNo) = Controls.Add("vb.label", "msgUserName" & postNo)
+            ReDim Preserve msgText(postNo)
+            Set msgText(postNo) = Controls.Add("vb.label", "msgText" & postNo)
+            ReDim Preserve msgLike(postNo)
+            Set msgLike(postNo) = Controls.Add("vb.commandbutton", "msgLike" & postNo)
+        End If
+        ' username
+        msgUserName(postNo).Width = awsom.Width - VScroll1.Width - 75
+        msgUserName(postNo).Top = 1500 * postNo
+        msgUserName(postNo).Left = 0
+        msgUserName(postNo).Height = 200
+        msgUserName(postNo).Alignment = 2
+        msgUserName(postNo).Caption = "Dynamic name"
+        msgUserName(postNo).Font = "MS UI Gothic"
+        msgUserName(postNo).Visible = True
+        ' text
+        msgText(postNo).Width = awsom.Width - VScroll1.Width - 200
+        msgText(postNo).Top = 350 + 1500 * postNo
+        msgText(postNo).Left = 100
+        msgText(postNo).Height = 1000
+        msgText(postNo).Caption = "Dynamic text"
+        msgText(postNo).Font = "MS UI Gothic"
+        msgText(postNo).Visible = True
+        ' like button
+        msgLike(postNo).Width = 500
+        msgLike(postNo).Top = 900 + 1500 * postNo
+        msgLike(postNo).Left = 100
+        msgLike(postNo).Height = 300
+        msgLike(postNo).Caption = "Like"
+        msgLike(postNo).Font = "MS UI Gothic"
+        msgLike(postNo).Visible = True
 
-    Option Explicit
-    Dim old As Integer
-    Dim magic As Integer
-    Dim msgUserName() As Object, msgText() As Object, msgLike() As Object
-    Dim alreadydefined As Boolean ' this will break stuff in the future
-    Public postNo As Integer
-    Dim Status, hProcess As Long
-    Dim lExit, token_t, token_s, token_read, data_api_object, data_api_file, _
-        data_api_readfile, userName, content, JB, read, token, instance, path, _
-        instance_t, instance_s, instance_
-
-    
-
-    Private Declare Function OpenProcess _
-                Lib "kernel32" _
-                (ByVal dwDesiredAccess As Long, _
-                ByVal bInheritHandle As Long, _
-                ByVal dwProcessId As Long) As Long
-    Private Declare Function GetExitCodeProcess Lib "kernel32" (ByVal hProcess As Long, lpexitcode As Long) As Long
-
-    Sub newItemSet(loops As Integer)
-        While loops > 0
-            If Not alreadydefined Then
-                ReDim Preserve msgUserName(postNo)
-                Set msgUserName(postNo) = Controls.Add("vb.label", "msgUserName" & postNo)
-                ReDim Preserve msgText(postNo)
-                Set msgText(postNo) = Controls.Add("vb.label", "msgText" & postNo)
-                ReDim Preserve msgLike(postNo)
-                Set msgLike(postNo) = Controls.Add("vb.commandbutton", "msgLike" & postNo)
-            End If
-            ' username
-            msgUserName(postNo).Width = awsom.Width - VScroll1.Width - 75
-            msgUserName(postNo).Top = 1500 * postNo
-            msgUserName(postNo).Left = 0
-            msgUserName(postNo).Height = 200
-            msgUserName(postNo).Alignment = 2
-            msgUserName(postNo).Caption = "Dynamic name"
-            msgUserName(postNo).Font = "MS UI Gothic"
-            msgUserName(postNo).Visible = True
-            ' text
-            msgText(postNo).Width = awsom.Width - VScroll1.Width - 200
-            msgText(postNo).Top = 350 + 1500 * postNo
-            msgText(postNo).Left = 100
-            msgText(postNo).Height = 1000
-            msgText(postNo).Caption = "Dynamic text"
-            msgText(postNo).Font = "MS UI Gothic"
-            msgText(postNo).Visible = True
-            ' like button
-            msgLike(postNo).Width = 500
-            msgLike(postNo).Top = 900 + 1500 * postNo
-            msgLike(postNo).Left = 100
-            msgLike(postNo).Height = 300
-            msgLike(postNo).Caption = "Like"
-            msgLike(postNo).Font = "MS UI Gothic"
-            msgLike(postNo).Visible = True
-
-            ' todo: add avatar, images (if present), retoot, reply
-            postNo = postNo + 1
-            loops = loops - 1
-        Wend
-    End Sub
+        ' todo: add avatar, images (if present), retoot, reply
+        postNo = postNo + 1
+        loops = loops - 1
+    Wend
+End Sub
      
 Private Sub addbt_Click()
     awsomPost.Show
@@ -147,32 +144,11 @@ End Sub
         counter = 1
         If magic = 0 Then
             magic = 1
-
-             Set token = CreateObject("Scripting.FileSystemObject")
-            If Dir(path & "\token.txt") <> "" Then
-                Set token_t = token.GetFile(path & "\token.txt")
-                Set token_s = token_t.OpenAsTextStream(1, -2)
-                token_read = token_s.ReadLine
-                Set instance_ = CreateObject("Scripting.FileSystemObject")
-                Set instance_t = instance_.GetFile(path & "\instance.txt")
-                Set instance_s = instance_t.OpenAsTextStream(1, -2)
-                instance = instance_s.ReadLine
-                
-                Status = Shell(path & "\curl.exe --cacert " & path & "\cacert.pem --header ""Authorization: Bearer " & token_read & """ https://" & instance & "/api/v1/timelines/home -o " & path & "\data", vbHide)
-                hProcess = OpenProcess(&H400, False, Status) '&H400 = process query information
-                
-                Do
-                    GetExitCodeProcess hProcess, lExit
-                    DoEvents
-                Loop While lExit = &H103 '&H103 = still active
-                
-                Set data_api_object = CreateObject("Scripting.FileSystemObject")
-                Set data_api_file = data_api_object.GetFile(path & "\data")
-                Set data_api_readfile = data_api_file.OpenAsTextStream(1, -2)
-                read = data_api_readfile.ReadLine
-                data_api_readfile.Close
+            
+            Set apiClient = New API
+            If apiClient.init() Then ' TODO: we shouldn't initialize it here, i'm just testing stuff
                 Set JB = New JsonBag
-                JB.JSON = read
+                JB.JSON = apiClient.request("/api/v1/timelines/home")
                 newItemSet (JB.Count)
                 alreadydefined = True
                 While JB.Count >= counter
@@ -215,22 +191,6 @@ End Sub
         magic = 0
       End If
     End Sub
-    
-
-
-
-Private Sub Form_Load()
-alreadydefined = False
-path = App.path
-magic = 0
-With VScroll1
-    .Height = Me.ScaleHeight - 200
-    .Min = 0
-    .Max = 20000
-    .SmallChange = Screen.TwipsPerPixelY * 10
-    .LargeChange = .SmallChange
-End With
-End Sub
 
 Private Sub VScroll1_Change() ' hack for scrolling, basically move everything (expect scroll and buttons) UP
     Dim eachctl As Control

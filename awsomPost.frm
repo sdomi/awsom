@@ -1,11 +1,14 @@
 VERSION 5.00
 Begin VB.Form awsomPost 
+   BorderStyle     =   1  'Fixed Single
    Caption         =   "New Toot"
    ClientHeight    =   2970
-   ClientLeft      =   60
-   ClientTop       =   345
+   ClientLeft      =   45
+   ClientTop       =   330
    ClientWidth     =   4680
    LinkTopic       =   "Form1"
+   MaxButton       =   0   'False
+   MinButton       =   0   'False
    ScaleHeight     =   2970
    ScaleWidth      =   4680
    StartUpPosition =   3  'Windows Default
