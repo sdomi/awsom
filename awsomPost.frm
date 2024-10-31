@@ -52,34 +52,18 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Private Declare Function OpenProcess _
-                Lib "kernel32" _
-                (ByVal dwDesiredAccess As Long, _
-                ByVal bInheritHandle As Long, _
-                ByVal dwProcessId As Long) As Long
-    Private Declare Function GetExitCodeProcess Lib "kernel32" (ByVal hProcess As Long, lpexitcode As Long) As Long
-' variable names in here should be changed
-'basically half of code is here because i'm lazy and don't want to make a module
 Private Sub Command1_Click()
-        Dim token_t, token_s, token_read, token, instance, instance_t, instance_s, path
-        path = App.path
-        Set token = CreateObject("Scripting.FileSystemObject")
-        Set token_t = token.GetFile(path & "\token.txt")
-        Set token_s = token_t.OpenAsTextStream(1, -2)
-        token_read = token_s.ReadLine
-        Set instance_ = CreateObject("Scripting.FileSystemObject")
-        Set instance_t = instance_.GetFile(path & "\instance.txt")
-        Set instance_s = instance_t.OpenAsTextStream(1, -2)
-        instance = instance_s.ReadLine
-        Dim hProcess As Long
-        Dim lExit
-        Status = Shell(path & "\curl.exe --cacert " & path & "\cacert.pem --header ""Authorization: Bearer " & token_read & """ --data ""status=" & Text1.Text & """ https://" & instance & "/api/v1/statuses -o " & path & "\data", vbHide)
-        hProcess = OpenProcess(&H400, False, Status)
-        
-        Do
-            GetExitCodeProcess hProcess, lExit
-            DoEvents
-        Loop While lExit = &H103
-
+    
+    Set apiClient = New API
+    If apiClient.init() Then
+        apiClient.request "/api/v1/statuses"
+    Else
+        MsgBox "Error: could not initialize API", vbCritical
         Unload Me
+    End If
+    
+    apiClient.request "/api/v1/statuses", "status=" & Text1.Text
+
+    Unload Me
 End Sub
+

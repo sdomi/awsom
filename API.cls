@@ -46,9 +46,16 @@ Public Function init() As Boolean
 
 End Function
 
-Public Function request(endpoint As String) As String
+Public Function request(endpoint As String, Optional data As String) As String
+    ' TODO: do we want separate functions for different methods? TBD
     ' TODO: unfuck the CA bundle
-    Status = Shell(App.path & "\curl.exe -k --header """ & authHeader & token & """ " & instance & endpoint & " -o " & App.path & "\data", vbShow)
+    Dim payload As String
+
+    If data <> "" Then
+        payload = "-d """ & data & """ "
+    End If
+
+    Status = Shell(App.path & "\curl.exe -k -H """ & authHeader & token & """ " & instance & endpoint & " " & payload & "-o " & App.path & "\data", vbShow)
     hProcess = OpenProcess(&H400, False, Status) '&H400 = process query information
     
     Do

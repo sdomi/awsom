@@ -144,7 +144,7 @@ End Sub
         counter = 1
         If magic = 0 Then
             magic = 1
-            
+
             Set apiClient = New API
             If apiClient.init() Then ' TODO: we shouldn't initialize it here, i'm just testing stuff
                 Set JB = New JsonBag
