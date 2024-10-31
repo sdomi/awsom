@@ -66,21 +66,10 @@ Dim msgUserName() As Object, msgText() As Object, msgLike() As Object
 Dim alreadydefined As Boolean ' this will break stuff in the future
 Public postNo As Integer
 Dim Status, hProcess As Long
-Dim lExit, token_t, token_s, token_read, data_api_object, data_api_file, _
-    data_api_readfile, userName, content, JB, read, token, instance, path, _
-    instance_t, instance_s, instance_
 
 Dim apiClient As API
 
-Private Declare Function OpenProcess _
-            Lib "kernel32" _
-            (ByVal dwDesiredAccess As Long, _
-            ByVal bInheritHandle As Long, _
-            ByVal dwProcessId As Long) As Long
-Private Declare Function GetExitCodeProcess Lib "kernel32" (ByVal hProcess As Long, lpexitcode As Long) As Long
-
 Private Sub Form_Load()
-    path = App.path
     magic = 0
     With VScroll1
         .Height = Me.ScaleHeight - 200
@@ -107,16 +96,14 @@ Sub newItemSet(loops As Integer)
         msgUserName(postNo).Left = 0
         msgUserName(postNo).Height = 200
         msgUserName(postNo).Alignment = 2
-        msgUserName(postNo).Caption = "Dynamic name"
-        msgUserName(postNo).Font = "MS UI Gothic"
+        msgUserName(postNo).Caption = "<dynamic name>"
         msgUserName(postNo).Visible = True
         ' text
         msgText(postNo).Width = awsom.Width - VScroll1.Width - 200
         msgText(postNo).Top = 350 + 1500 * postNo
         msgText(postNo).Left = 100
         msgText(postNo).Height = 1000
-        msgText(postNo).Caption = "Dynamic text"
-        msgText(postNo).Font = "MS UI Gothic"
+        msgText(postNo).Caption = "<dynamic text>"
         msgText(postNo).Visible = True
         ' like button
         msgLike(postNo).Width = 500
@@ -124,7 +111,6 @@ Sub newItemSet(loops As Integer)
         msgLike(postNo).Left = 100
         msgLike(postNo).Height = 300
         msgLike(postNo).Caption = "Like"
-        msgLike(postNo).Font = "MS UI Gothic"
         msgLike(postNo).Visible = True
 
         ' todo: add avatar, images (if present), retoot, reply
@@ -137,21 +123,23 @@ Private Sub addbt_Click()
     awsomPost.Show
 End Sub
 
-    Private Sub refreshbt_Click()
+Private Sub refreshbt_Click()
     postNo = 1
     VScroll1.Value = 0
-        Dim counter As Integer
-        counter = 1
-        If magic = 0 Then
-            magic = 1
+    Dim counter As Integer
+    counter = 1
+    If magic = 0 Then
+        magic = 1
 
-            Set apiClient = New API
-            If apiClient.init() Then ' TODO: we shouldn't initialize it here, i'm just testing stuff
-                Set JB = New JsonBag
-                JB.JSON = apiClient.request("/api/v1/timelines/home")
-                newItemSet (JB.Count)
-                alreadydefined = True
-                While JB.Count >= counter
+        Set apiClient = New API
+        If apiClient.init() Then ' TODO: we shouldn't initialize it here, i'm just testing stuff
+            Dim JB
+            Set JB = New JsonBag
+            JB.JSON = apiClient.request("/api/v1/timelines/home")
+            newItemSet (JB.Count)
+            alreadydefined = True
+            While JB.Count >= counter
+                Dim userName, content
                 userName = JB.Item(counter).Item("account").Item("acct")
                 content = JB.Item(counter).Item("content")
                 Dim test_start As Long
@@ -164,7 +152,7 @@ End Sub
                     test_start = InStr(content, "<")
                     test_end = InStr(content, ">")
                     If test_start = 0 Or test_end = 0 Then
-                     I = 0
+                        I = 0
                     Else
                         content_before = Mid$(content, 1, test_start - 1)
                         content_after = Mid$(content, test_end + 1, 33333)
@@ -175,11 +163,11 @@ End Sub
                 msgUserName(counter).Caption = userName
                 msgText(counter).Caption = content
                 counter = counter + 1
-                Wend
-        Else
-            loginform.Show
-            awsom.Hide
-        End If
+            Wend
+    Else
+        loginform.Show
+        awsom.Hide
+    End If
 
 'test_image = InStr(content, "<a href=")  ' basically move this to the end
 'test_image_end = InStr(content, """ ")   ' and add magic through parsing
@@ -188,11 +176,11 @@ End Sub
 'Picture1.Picture = LoadPicture(img_url)
 'End If
 
-        magic = 0
-      End If
-    End Sub
+    magic = 0
+  End If
+End Sub
 
-Private Sub VScroll1_Change() ' hack for scrolling, basically move everything (expect scroll and buttons) UP
+Private Sub VScroll1_Change() ' hack for scrolling, basically move everything (except scroll and buttons) UP
     Dim eachctl As Control
     For Each eachctl In Me.Controls
         If Not (TypeOf eachctl Is VScrollBar) And Not eachctl.Name = "addbt" And Not eachctl.Name = "refreshbt" And Not eachctl.Name = "buttonframe" Then
@@ -201,6 +189,5 @@ Private Sub VScroll1_Change() ' hack for scrolling, basically move everything (e
         End If
 Next
 old = VScroll1.Value
-
     
 End Sub
