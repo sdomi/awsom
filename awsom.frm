@@ -80,23 +80,28 @@ Private Sub Form_Load()
     End With
 End Sub
 
-Sub newItemSet(loops As Integer)
-    While loops > 0
-        If Not alreadydefined Then
-            ReDim Preserve postList(postNo)
-            Set postList(postNo) = Controls.Add("notSoAwsom.PostView", "postView" & postNo)
+Private Sub Form_Resize()
+    Dim eachctl As Control
+    For Each eachctl In Me.Controls
+        If Not (TypeOf eachctl Is VScrollBar) And Not eachctl.Name = "addbt" And Not eachctl.Name = "refreshbt" And Not eachctl.Name = "buttonframe" Then
+            eachctl.Width = awsom.Width - VScroll1.Width - 75
         End If
-        ' username
-        postList(postNo).Width = awsom.Width - VScroll1.Width - 75
-        postList(postNo).Top = 350 + 2300 * postNo ' TODO
-        postList(postNo).Left = 0
-        postList(postNo).Visible = True
-        
-        postNo = postNo + 1
-        loops = loops - 1
-    Wend
+    Next
+    VScroll1.Left = awsom.Width - VScroll1.Width - 100
+    VScroll1.Height = awsom.Height - 370 ' twigs are wacky
 End Sub
-     
+
+Private Sub VScroll1_Change() ' hack for scrolling, basically move everything (except scroll and buttons) UP
+    Dim eachctl As Control
+    For Each eachctl In Me.Controls
+        If Not (TypeOf eachctl Is VScrollBar) And Not eachctl.Name = "addbt" And Not eachctl.Name = "refreshbt" And Not eachctl.Name = "buttonframe" Then
+            'MsgBox eachctl.Name
+            eachctl.Top = eachctl.Top + old - VScroll1.value
+        End If
+    Next
+    old = VScroll1.value
+End Sub
+
 Private Sub addbt_Click()
     awsomPost.Show
 End Sub
@@ -170,14 +175,18 @@ Private Sub refreshbt_Click()
   End If
 End Sub
 
-Private Sub VScroll1_Change() ' hack for scrolling, basically move everything (except scroll and buttons) UP
-    Dim eachctl As Control
-    For Each eachctl In Me.Controls
-        If Not (TypeOf eachctl Is VScrollBar) And Not eachctl.Name = "addbt" And Not eachctl.Name = "refreshbt" And Not eachctl.Name = "buttonframe" Then
-            'MsgBox eachctl.Name
-            eachctl.Top = eachctl.Top + old - VScroll1.value
+Sub newItemSet(loops As Integer)
+    While loops > 0
+        If Not alreadydefined Then
+            ReDim Preserve postList(postNo)
+            Set postList(postNo) = Controls.Add("notSoAwsom.PostView", "postView" & postNo)
         End If
-Next
-old = VScroll1.value
-    
+        postList(postNo).Width = awsom.Width - VScroll1.Width - 75
+        postList(postNo).Top = 350 + 2300 * postNo ' TODO
+        postList(postNo).Left = 0
+        postList(postNo).Visible = True
+        
+        postNo = postNo + 1
+        loops = loops - 1
+    Wend
 End Sub
