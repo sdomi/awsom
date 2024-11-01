@@ -62,7 +62,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Dim old As Integer
 Dim magic As Integer
-Dim msgUserName() As Object, msgText() As Object, msgLike() As Object
+Dim postList() As Object
 Dim alreadydefined As Boolean ' this will break stuff in the future
 Public postNo As Integer
 Dim Status, hProcess As Long
@@ -83,37 +83,15 @@ End Sub
 Sub newItemSet(loops As Integer)
     While loops > 0
         If Not alreadydefined Then
-            ReDim Preserve msgUserName(postNo)
-            Set msgUserName(postNo) = Controls.Add("vb.label", "msgUserName" & postNo)
-            ReDim Preserve msgText(postNo)
-            Set msgText(postNo) = Controls.Add("vb.label", "msgText" & postNo)
-            ReDim Preserve msgLike(postNo)
-            Set msgLike(postNo) = Controls.Add("vb.commandbutton", "msgLike" & postNo)
+            ReDim Preserve postList(postNo)
+            Set postList(postNo) = Controls.Add("notSoAwsom.PostView", "postView" & postNo)
         End If
         ' username
-        msgUserName(postNo).Width = awsom.Width - VScroll1.Width - 75
-        msgUserName(postNo).Top = 1500 * postNo
-        msgUserName(postNo).Left = 0
-        msgUserName(postNo).Height = 200
-        msgUserName(postNo).Alignment = 2
-        msgUserName(postNo).Caption = "<dynamic name>"
-        msgUserName(postNo).Visible = True
-        ' text
-        msgText(postNo).Width = awsom.Width - VScroll1.Width - 200
-        msgText(postNo).Top = 350 + 1500 * postNo
-        msgText(postNo).Left = 100
-        msgText(postNo).Height = 1000
-        msgText(postNo).Caption = "<dynamic text>"
-        msgText(postNo).Visible = True
-        ' like button
-        msgLike(postNo).Width = 500
-        msgLike(postNo).Top = 900 + 1500 * postNo
-        msgLike(postNo).Left = 100
-        msgLike(postNo).Height = 300
-        msgLike(postNo).Caption = "Like"
-        msgLike(postNo).Visible = True
-
-        ' todo: add avatar, images (if present), retoot, reply
+        postList(postNo).Width = awsom.Width - VScroll1.Width - 75
+        postList(postNo).Top = 350 + 2300 * postNo ' TODO
+        postList(postNo).Left = 0
+        postList(postNo).Visible = True
+        
         postNo = postNo + 1
         loops = loops - 1
     Wend
@@ -125,7 +103,7 @@ End Sub
 
 Private Sub refreshbt_Click()
     postNo = 1
-    VScroll1.Value = 0
+    VScroll1.value = 0
     Dim counter As Integer
     counter = 1
     If magic = 0 Then
@@ -136,9 +114,21 @@ Private Sub refreshbt_Click()
             Dim JB
             Set JB = New JsonBag
             JB.JSON = apiClient.request("/api/v1/timelines/home")
-            newItemSet (JB.Count)
+            
+            ' TODO: hack hack hack hack
+            ' the below results in an overflow because PostView has a height of 2350 now
+            ' can we use pixels instead of twigs? if not, lazy loading it is...
+            
+            Dim amount
+            If JB.Count > 10 Then
+                amount = 10
+            Else
+                amount = JB.Count
+            End If
+            
+            newItemSet (amount)
             alreadydefined = True
-            While JB.Count >= counter
+            While amount >= counter
                 Dim userName, content
                 userName = JB.Item(counter).Item("account").Item("acct")
                 content = JB.Item(counter).Item("content")
@@ -155,13 +145,13 @@ Private Sub refreshbt_Click()
                         I = 0
                     Else
                         content_before = Mid$(content, 1, test_start - 1)
-                        content_after = Mid$(content, test_end + 1, 33333)
+                        content_after = Mid$(content, test_end + 1, 33333) '??? TODO
                     End If
                     content = content_before + content_after
                     I = I - 1
                 Wend
-                msgUserName(counter).Caption = userName
-                msgText(counter).Caption = content
+                postList(counter).Nickname = userName
+                postList(counter).content = content
                 counter = counter + 1
             Wend
     Else
@@ -185,9 +175,9 @@ Private Sub VScroll1_Change() ' hack for scrolling, basically move everything (e
     For Each eachctl In Me.Controls
         If Not (TypeOf eachctl Is VScrollBar) And Not eachctl.Name = "addbt" And Not eachctl.Name = "refreshbt" And Not eachctl.Name = "buttonframe" Then
             'MsgBox eachctl.Name
-            eachctl.Top = eachctl.Top + old - VScroll1.Value
+            eachctl.Top = eachctl.Top + old - VScroll1.value
         End If
 Next
-old = VScroll1.Value
+old = VScroll1.value
     
 End Sub

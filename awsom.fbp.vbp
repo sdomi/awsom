@@ -1,11 +1,12 @@
 Type=Exe
 Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#C:\WINDOWS\system32\stdole2.tlb#OLE Automation
+Object={BEC61919-E6C4-11D1-BE7D-C63815000000}#1.0#0; FLEXWIZ.OCX
 Form=awsom.frm
 Class=JsonBag; JsonBag.cls
-Object={BEC61919-E6C4-11D1-BE7D-C63815000000}#1.0#0; FLEXWIZ.OCX
 Form=awsomPost.frm
 Form=loginform.frm
 Class=API; API.cls
+UserControl=PostView.ctl
 IconForm="awsom"
 Startup="awsom"
 HelpFile=""
@@ -38,6 +39,7 @@ Unattended=0
 Retained=0
 ThreadPerObject=0
 MaxNumberOfThreads=1
+RemoveUnusedControlInfo=0
 DebugStartupOption=0
 
 [MS Transaction Server]
