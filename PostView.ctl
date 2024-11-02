@@ -62,6 +62,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+Dim imgPath As String ' todo hack
+
 Public Property Let content(ByVal value As String)
     messageObj.Caption = value
 End Property
@@ -79,11 +81,10 @@ Public Property Get Nickname() As String
 End Property
 
 Public Property Let avatar(ByVal value As String)
-    Dim a As String
-    a = App.Path & value
-    If Dir(a) <> "" Then
+    imgPath = App.Path & value
+    If Dir(imgPath) <> "" Then
         Dim pic As Image
-        authorImg.Picture = LoadPicture(a)
+        authorImg.Picture = LoadPicture(imgPath)
         authorImg.AutoRedraw = True
         authorImg.PaintPicture authorImg.Picture, _
         0, 0, authorImg.ScaleWidth, authorImg.ScaleHeight, _
@@ -92,3 +93,9 @@ Public Property Let avatar(ByVal value As String)
         Debug.Print "could not load " & a
     End If
 End Property
+
+Private Sub authorImg_Click()
+    awsomProfile.selectUser "", Me.Nickname, imgPath
+    awsomProfile.Show ' TODO: instantiate multiple at once
+End Sub
+
