@@ -26,13 +26,13 @@ Public Function init() As Boolean
     Dim token_, token_t, token_s, instance_, instance_t, instance_s
 
     Set token_ = CreateObject("Scripting.FileSystemObject")
-    If Dir(App.path & "\token.txt") <> "" Then ' naive check + we should store this in a JSON anyways
-        Set token_t = token_.GetFile(App.path & "\token.txt")
+    If Dir(App.Path & "\token.txt") <> "" Then ' naive check + we should store this in a JSON anyways
+        Set token_t = token_.GetFile(App.Path & "\token.txt")
         Set token_s = token_t.OpenAsTextStream(1, -2)
         token = token_s.ReadLine
 
         Set instance_ = CreateObject("Scripting.FileSystemObject")
-        Set instance_t = instance_.GetFile(App.path & "\instance.txt")
+        Set instance_t = instance_.GetFile(App.Path & "\instance.txt")
         Set instance_s = instance_t.OpenAsTextStream(1, -2)
         instance = "https://" & instance_s.ReadLine & "/"
 
@@ -55,7 +55,7 @@ Public Function request(endpoint As String, Optional data As String) As String
         payload = "-d """ & data & """ "
     End If
 
-    Status = Shell(App.path & "\curl.exe -k -H """ & authHeader & token & """ " & instance & endpoint & " " & payload & "-o " & App.path & "\data", vbShow)
+    Status = Shell(App.Path & "\curl.exe -k -H """ & authHeader & token & """ " & instance & endpoint & " " & payload & "-o " & App.Path & "\data", vbHide)
     hProcess = OpenProcess(&H400, False, Status) '&H400 = process query information
     
     Do
@@ -65,7 +65,7 @@ Public Function request(endpoint As String, Optional data As String) As String
 
     ' BAD BAD BAD TODO
     Set data_api_object = CreateObject("Scripting.FileSystemObject")
-    Set data_api_file = data_api_object.GetFile(App.path & "\data")
+    Set data_api_file = data_api_object.GetFile(App.Path & "\data")
     Set data_api_readfile = data_api_file.OpenAsTextStream(1, -2)
     request = data_api_readfile.ReadLine
     data_api_readfile.Close

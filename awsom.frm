@@ -67,6 +67,7 @@ Dim alreadydefined As Boolean ' this will break stuff in the future
 Public postNo As Integer
 Dim Status, hProcess As Long
 
+Dim httpClient As HTTP
 Dim apiClient As API
 
 Private Sub Form_Load()
@@ -78,6 +79,8 @@ Private Sub Form_Load()
         .SmallChange = Screen.TwipsPerPixelY * 10
         .LargeChange = .SmallChange
     End With
+    
+    Set httpClient = New HTTP
 End Sub
 
 Private Sub Form_Resize()
@@ -134,8 +137,16 @@ Private Sub refreshbt_Click()
             newItemSet (amount)
             alreadydefined = True
             While amount >= counter
-                Dim userName, content
+                Dim userName, content, avatarPath, avatar
                 userName = JB.Item(counter).Item("account").Item("acct")
+                
+                avatar = JB.Item(counter).Item("account").Item("avatar")
+                If InStr(avatar, ".jpg") <> 0 Or InStr(avatar, ".jpeg") <> 0 Then
+                    avatarPath = "\cache\" & JB.Item(counter).Item("account").Item("id")
+                    httpClient.fetch avatar, avatarPath
+                    postList(counter).avatar = avatarPath
+                End If
+
                 content = JB.Item(counter).Item("content")
                 Dim test_start As Long
                 Dim test_end As Long
@@ -181,6 +192,7 @@ Sub newItemSet(loops As Integer)
             ReDim Preserve postList(postNo)
             Set postList(postNo) = Controls.Add("notSoAwsom.PostView", "postView" & postNo)
         End If
+        
         postList(postNo).Width = awsom.Width - VScroll1.Width - 75
         postList(postNo).Top = 350 + 2300 * postNo ' TODO
         postList(postNo).Left = 0

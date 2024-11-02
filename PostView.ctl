@@ -9,8 +9,9 @@ Begin VB.UserControl PostView
    Begin VB.PictureBox authorImg 
       Height          =   495
       Left            =   0
-      ScaleHeight     =   435
-      ScaleWidth      =   435
+      ScaleHeight     =   29
+      ScaleMode       =   3  'Pixel
+      ScaleWidth      =   29
       TabIndex        =   4
       Top             =   0
       Width           =   495
@@ -61,12 +62,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Public Property Let Content(ByVal value As String)
+Public Property Let content(ByVal value As String)
     messageObj.Caption = value
 End Property
 
-Public Property Get Content() As String
-    Content = messageObj.Caption
+Public Property Get content() As String
+    content = messageObj.Caption
 End Property
 
 Public Property Let Nickname(ByVal value As String)
@@ -75,4 +76,19 @@ End Property
 
 Public Property Get Nickname() As String
     Nickname = usernameObj.Caption
+End Property
+
+Public Property Let avatar(ByVal value As String)
+    Dim a As String
+    a = App.Path & value
+    If Dir(a) <> "" Then
+        Dim pic As Image
+        authorImg.Picture = LoadPicture(a)
+        authorImg.AutoRedraw = True
+        authorImg.PaintPicture authorImg.Picture, _
+        0, 0, authorImg.ScaleWidth, authorImg.ScaleHeight, _
+        0, 0, authorImg.Picture.Width / 26.46, authorImg.Picture.Height / 26.46
+    Else
+        Debug.Print "could not load " & a
+    End If
 End Property
