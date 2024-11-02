@@ -149,9 +149,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Dim file_token As Integer
-Dim file_instance As Integer
-Dim path, token_path As String, instance_path As String
+Private file_token As Integer
+Private file_instance As Integer
+Private Path As String, token_path As String, instance_path As String
 
 Private Sub cancelbt_Click()
     awsom.Show
@@ -159,9 +159,9 @@ Private Sub cancelbt_Click()
 End Sub
 
 Private Sub Command1_Click()
-    path = App.path
-    token_path = path & "\token.txt"
-    instance_path = path & "\instance.txt"
+    Path = App.Path
+    token_path = Path & "\token.txt"
+    instance_path = Path & "\instance.txt"
     Open token_path For Output As #1
     Open instance_path For Output As #2
     Print #1, token.Text

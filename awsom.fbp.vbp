@@ -8,6 +8,7 @@ Form=loginform.frm
 Class=API; API.cls
 UserControl=PostView.ctl
 Class=HTTP; HTTP.cls
+Form=awsomProfile.frm
 IconForm="awsom"
 Startup="awsom"
 HelpFile=""

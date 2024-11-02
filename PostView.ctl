@@ -62,7 +62,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Dim imgPath As String ' todo hack
+Public imgPath As String ' todo hack
 
 Public Property Let content(ByVal value As String)
     messageObj.Caption = value

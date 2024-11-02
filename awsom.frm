@@ -60,15 +60,15 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
-Dim old As Integer
-Dim magic As Integer
-Dim postList() As Object
-Dim alreadydefined As Boolean ' this will break stuff in the future
+Private old As Integer
+Private magic As Integer
+Private postList() As Object
+Private alreadydefined As Boolean ' this will break stuff in the future
 Public postNo As Integer
-Dim Status, hProcess As Long
+Private Status, hProcess As Long
 
-Dim httpClient As HTTP
-Dim apiClient As API
+Private httpClient As HTTP
+Private apiClient As API
 
 Private Sub Form_Load()
     magic = 0
@@ -137,8 +137,8 @@ Private Sub refreshbt_Click()
             newItemSet (amount)
             alreadydefined = True
             While amount >= counter
-                Dim userName, content, avatarPath, avatar
-                userName = JB.Item(counter).Item("account").Item("acct")
+                Dim username, content, avatarPath, avatar
+                username = JB.Item(counter).Item("account").Item("acct")
                 
                 avatar = JB.Item(counter).Item("account").Item("avatar")
                 If InStr(avatar, ".jpg") <> 0 Or InStr(avatar, ".jpeg") <> 0 Then
@@ -166,7 +166,7 @@ Private Sub refreshbt_Click()
                     content = content_before + content_after
                     I = I - 1
                 Wend
-                postList(counter).Nickname = userName
+                postList(counter).Nickname = username
                 postList(counter).content = content
                 counter = counter + 1
             Wend
