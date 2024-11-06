@@ -72,10 +72,20 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Public Function selectUser(displayName As String, username As String, avatar As String)
-    ' TODO: we probably want to pass an ID here and resolve everything manually :p
-    displayNameObj.Caption = displayName
-    usernameObj.Caption = username
+Public Function selectUser(id As String)
+    Dim handle As Integer, contents As String, user As JsonBag, _
+        avatar As String
+    handle = FreeFile
+    Open App.Path & "\cache\" & id & ".json" For Input As #handle
+    contents = StrConv(InputB(LOF(iFile), iFile), vbUnicode) 'https://stackoverflow.com/a/2875248 - maybe just abstract?
+    Close #handle
+
+    Set user = New JsonBag
+    user.JSON = contents
+    
+    displayNameObj.Caption = user.Item("display_name")
+    usernameObj.Caption = user.Item("fqn")
+    avatar = App.Path & "\cache\" & id & ".jpg"
     
     If Dir(avatar) <> "" Then
         Dim pic As Image

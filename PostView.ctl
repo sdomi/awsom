@@ -63,6 +63,7 @@ Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Public imgPath As String ' todo hack
+Public userId As String
 
 Public Property Let content(ByVal value As String)
     messageObj.Caption = value
@@ -84,6 +85,7 @@ Public Property Let avatar(ByVal value As String)
     imgPath = App.Path & value
     If Dir(imgPath) <> "" Then
         Dim pic As Image
+        On Error Resume Next ' we cannot guarantee that all images won't error
         authorImg.Picture = LoadPicture(imgPath)
         authorImg.AutoRedraw = True
         authorImg.PaintPicture authorImg.Picture, _
@@ -95,7 +97,7 @@ Public Property Let avatar(ByVal value As String)
 End Property
 
 Private Sub authorImg_Click()
-    awsomProfile.selectUser "", Me.Nickname, imgPath
+    awsomProfile.selectUser userId
     awsomProfile.Show ' TODO: instantiate multiple at once
 End Sub
 

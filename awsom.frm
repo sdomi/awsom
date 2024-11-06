@@ -141,11 +141,22 @@ Private Sub refreshbt_Click()
                 username = JB.Item(counter).Item("account").Item("acct")
                 
                 avatar = JB.Item(counter).Item("account").Item("avatar")
+                Debug.Print avatar
                 If InStr(avatar, ".jpg") <> 0 Or InStr(avatar, ".jpeg") <> 0 Then
-                    avatarPath = "\cache\" & JB.Item(counter).Item("account").Item("id")
-                    httpClient.fetch avatar, avatarPath
-                    postList(counter).avatar = avatarPath
+                    avatarPath = "\cache\" & JB.Item(counter).Item("account").Item("id") & ".jpg"
+                    If Dir(App.Path & avatarPath) = "" Then
+                        httpClient.fetch avatar, avatarPath
+                        postList(counter).avatar = avatarPath
+                    End If
                 End If
+                postList(counter).userId = JB.Item(counter).Item("account").Item("id")
+                
+                ' TODO: improve this somewhat
+                Dim handle
+                handle = FreeFile
+                Open App.Path & "\cache\" & JB.Item(counter).Item("account").Item("id") & ".json" For Output As #handle
+                Print #handle, JB.Item(counter).Item("account").JSON
+                Close #handle
 
                 content = JB.Item(counter).Item("content")
                 Dim test_start As Long
