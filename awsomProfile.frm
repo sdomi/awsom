@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin VB.Form awsomProfile 
-   Caption         =   "<unset> - Profile"
+   Caption         =   "awsom: <unset>"
    ClientHeight    =   5745
    ClientLeft      =   60
    ClientTop       =   345
@@ -77,7 +77,7 @@ Public Function selectUser(id As String)
         avatar As String
     handle = FreeFile
     Open App.Path & "\cache\" & id & ".json" For Input As #handle
-    contents = StrConv(InputB(LOF(iFile), iFile), vbUnicode) 'https://stackoverflow.com/a/2875248 - maybe just abstract?
+    contents = StrConv(InputB(LOF(handle), handle), vbUnicode) 'https://stackoverflow.com/a/2875248 - maybe just abstract?
     Close #handle
 
     Set user = New JsonBag
@@ -85,6 +85,7 @@ Public Function selectUser(id As String)
     
     displayNameObj.Caption = user.Item("display_name")
     usernameObj.Caption = user.Item("fqn")
+    Me.Caption = "awsom: " & user.Item("display_name") & " (" & user.Item("fqn") & ")"
     avatar = App.Path & "\cache\" & id & ".jpg"
     
     If Dir(avatar) <> "" Then
@@ -96,5 +97,37 @@ Public Function selectUser(id As String)
         0, 0, userImg.Picture.Width / 26.46, userImg.Picture.Height / 26.46
     Else
         Debug.Print "could not load " & a
+        userImg.Picture = Nothing
     End If
+
+    ' hack hack hack
+    ' todo: redo this when i'm less sick
+    Dim I As Integer, test_start, test_end, content_before, content_after, bio
+    bio = user.Item("note")
+    I = 100
+    Do While I > 0
+        test_start = InStr(bio, "<br/>")
+        If test_start = 0 Then
+            Exit Do
+        End If
+        content_before = Mid$(bio, 1, test_start - 1)
+        content_after = Mid$(bio, test_start + 5, 33333) '??? TODO
+        bio = content_before + Chr$(32) + content_after
+        I = I - 1
+    Loop
+
+    I = 100
+    Do While I > 0
+        test_start = InStr(bio, "<")
+        test_end = InStr(bio, ">")
+        If test_start = 0 Or test_end = 0 Then
+            Exit Do
+        End If
+        content_before = Mid$(bio, 1, test_start - 1)
+        content_after = Mid$(bio, test_end + 1, 33333) '??? TODO
+        bio = content_before + content_after
+        I = I - 1
+    Loop
+    
+    bioObj.Caption = bio
 End Function

@@ -146,8 +146,8 @@ Private Sub refreshbt_Click()
                     avatarPath = "\cache\" & JB.Item(counter).Item("account").Item("id") & ".jpg"
                     If Dir(App.Path & avatarPath) = "" Then
                         httpClient.fetch avatar, avatarPath
-                        postList(counter).avatar = avatarPath
                     End If
+                    postList(counter).avatar = avatarPath
                 End If
                 postList(counter).userId = JB.Item(counter).Item("account").Item("id")
                 
@@ -165,18 +165,17 @@ Private Sub refreshbt_Click()
             
                 Dim I
                 I = 100
-                While I > 0
+                Do While I > 0
                     test_start = InStr(content, "<")
                     test_end = InStr(content, ">")
                     If test_start = 0 Or test_end = 0 Then
-                        I = 0
-                    Else
-                        content_before = Mid$(content, 1, test_start - 1)
-                        content_after = Mid$(content, test_end + 1, 33333) '??? TODO
+                        Exit Do
                     End If
+                    content_before = Mid$(content, 1, test_start - 1)
+                    content_after = Mid$(content, test_end + 1, 33333) '??? TODO
                     content = content_before + content_after
                     I = I - 1
-                Wend
+                Loop
                 postList(counter).Nickname = username
                 postList(counter).content = content
                 counter = counter + 1
