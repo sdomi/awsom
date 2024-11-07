@@ -65,7 +65,6 @@ Begin VB.Form awsomProfile
    Begin VB.Label displayNameObj 
       Caption         =   "<unset>"
       BeginProperty Font 
-         Name            =   "MS Sans Serif"
          Size            =   17.25
          Charset         =   238
          Weight          =   400

@@ -40,12 +40,28 @@ Begin VB.UserControl PostView
       Top             =   1800
       Width           =   495
    End
-   Begin VB.Label usernameObj 
+   Begin VB.Label displayNameObj 
       Caption         =   "<name>"
-      Height          =   375
+      BeginProperty Font 
+         Size            =   9.75
+         Charset         =   238
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   255
+      Left            =   600
+      TabIndex        =   6
+      Top             =   0
+      Width           =   4095
+   End
+   Begin VB.Label usernameObj 
+      Caption         =   "<handle>"
+      Height          =   255
       Left            =   600
       TabIndex        =   5
-      Top             =   0
+      Top             =   240
       Width           =   4095
    End
    Begin VB.Label messageObj 
@@ -67,24 +83,32 @@ Public userId As String
 Public postId As String
 Public visibility As String
 
-Public Property Let content(ByVal Value As String)
-    messageObj.Caption = Value
+Public Property Let content(ByVal value As String)
+    messageObj.Caption = value
 End Property
 
 Public Property Get content() As String
     content = messageObj.Caption
 End Property
 
-Public Property Let Nickname(ByVal Value As String)
-    usernameObj.Caption = Value
+Public Property Let displayName(ByVal value As String)
+    displayNameObj.Caption = value
+End Property
+
+Public Property Get displayName() As String
+    displayName = displayNameObj.Caption
+End Property
+
+Public Property Let Nickname(ByVal value As String)
+    usernameObj.Caption = value
 End Property
 
 Public Property Get Nickname() As String
     Nickname = usernameObj.Caption
 End Property
 
-Public Property Let avatar(ByVal Value As String)
-    imgPath = App.Path & Value
+Public Property Let avatar(ByVal value As String)
+    imgPath = App.Path & value
     If Dir(imgPath) <> "" Then
         Dim pic As Image
         On Error Resume Next ' we cannot guarantee that all images won't error
@@ -113,6 +137,13 @@ Private Sub boostBtn_Click()
     End If
 End Sub
 
+Private Sub messageObj_Click()
+    Dim Form As awsom
+    Set Form = New awsom
+    Form.ctx = postId
+    Form.Show
+End Sub
+
 Private Sub replyBtn_Click()
     awsomPost.reply_visibility = visibility
     awsomPost.reply_to = postId
@@ -131,6 +162,7 @@ End Sub
 
 Private Sub UserControl_Resize()
     usernameObj.Width = UserControl.Width - authorImg.Width - 150
+    displayNameObj.Width = UserControl.Width - authorImg.Width - 150
     messageObj.Width = UserControl.Width - 300
 End Sub
 

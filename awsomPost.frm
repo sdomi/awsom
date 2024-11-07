@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin VB.Form awsomPost 
    BorderStyle     =   1  'Fixed Single
-   Caption         =   "New Toot"
+   Caption         =   "awsom: New Toot"
    ClientHeight    =   2985
    ClientLeft      =   45
    ClientTop       =   330

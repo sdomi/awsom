@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form awsom 
    Appearance      =   0  'Flat
    BackColor       =   &H80000005&
-   Caption         =   "notSoAwsom"
+   Caption         =   "awsom"
    ClientHeight    =   5415
    ClientLeft      =   60
    ClientTop       =   345
@@ -61,6 +61,12 @@ Private Status, hProcess As Long
 Private httpClient As HTTP
 Private apiClient As API
 
+Public Property Let ctx(ByVal value As String)
+    buttonframe.Visible = False
+    addbt.Visible = False
+    refreshbt.Visible = False
+End Property
+
 Private Sub Form_Load()
     magic = 0
     With VScroll1
@@ -89,10 +95,10 @@ Private Sub VScroll1_Change() ' hack for scrolling, basically move everything (e
     Dim eachctl As Control
     For Each eachctl In Me.Controls
         If Not (TypeOf eachctl Is VScrollBar) And Not eachctl.Name = "addbt" And Not eachctl.Name = "refreshbt" And Not eachctl.Name = "buttonframe" Then
-            eachctl.Top = eachctl.Top + old - VScroll1.Value
+            eachctl.Top = eachctl.Top + old - VScroll1.value
         End If
     Next
-    old = VScroll1.Value
+    old = VScroll1.value
 End Sub
 
 Private Sub addbt_Click()
@@ -101,7 +107,7 @@ End Sub
 
 Private Sub refreshbt_Click()
     postNo = 1
-    VScroll1.Value = 0
+    VScroll1.value = 0
     Dim counter As Integer
     counter = 1
     If magic = 0 Then
@@ -112,6 +118,7 @@ Private Sub refreshbt_Click()
             Dim JB
             Set JB = New JsonBag
             JB.JSON = apiClient.request("/api/v1/timelines/home")
+            ' TODO: if ctx is set, request /api/v1/statuses/<id> and /api/v1/statuses/<id>/context instead
             
             ' TODO: hack hack hack hack
             ' the below results in an overflow because PostView has a height of 2350 now
@@ -127,7 +134,7 @@ Private Sub refreshbt_Click()
             newItemSet (amount)
             alreadydefined = True
             While amount >= counter
-                Dim username, content, avatarPath, avatar
+                Dim username, content, avatarPath, avatar, displayName
                 username = JB.Item(counter).Item("account").Item("acct")
                 
                 avatar = JB.Item(counter).Item("account").Item("avatar")
@@ -169,6 +176,7 @@ Private Sub refreshbt_Click()
                     I = I - 1
                 Loop
                 postList(counter).Nickname = username
+                postList(counter).displayName = JB.Item(counter).Item("account").Item("display_name")
                 postList(counter).content = content
                 counter = counter + 1
             Wend
