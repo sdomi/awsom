@@ -9,6 +9,13 @@ Begin VB.Form awsomProfile
    ScaleHeight     =   5745
    ScaleWidth      =   6300
    StartUpPosition =   3  'Windows Default
+   Begin VB.VScrollBar postListScroll 
+      Height          =   2535
+      Left            =   6120
+      TabIndex        =   5
+      Top             =   3120
+      Width           =   255
+   End
    Begin VB.TextBox bioObj 
       BorderStyle     =   0  'None
       CausesValidation=   0   'False
@@ -22,7 +29,7 @@ Begin VB.Form awsomProfile
       Top             =   1080
       Width           =   6135
    End
-   Begin VB.CommandButton Command1 
+   Begin VB.CommandButton followBtn 
       Caption         =   "Follow"
       Enabled         =   0   'False
       Height          =   375
@@ -41,7 +48,7 @@ Begin VB.Form awsomProfile
       Top             =   120
       Width           =   855
    End
-   Begin VB.Line Line1 
+   Begin VB.Line profileLine 
       X1              =   120
       X2              =   6120
       Y1              =   3000
@@ -141,4 +148,14 @@ End Function
 Private Sub Form_Load()
     bioObj.BackColor = Me.BackColor
     bioObj.ForeColor = Me.ForeColor
+End Sub
+
+Private Sub Form_Resize()
+    postListScroll.Left = Me.Width - postListScroll.Width - 100
+    postListScroll.Height = Me.Height - profileLine.Y1 - 420
+    profileLine.X2 = Me.Width - 300
+    bioObj.Width = Me.Width - 245
+    displayNameObj.Width = Me.Width - userImg.Width - followBtn.Width - 165
+    usernameObj.Width = Me.Width - userImg.Width - followBtn.Width - 165
+    followBtn.Left = Me.Width - followBtn.Width - 165
 End Sub
