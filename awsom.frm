@@ -99,10 +99,10 @@ Private Sub VScroll1_Change() ' hack for scrolling, basically move everything (e
     For Each eachctl In Me.Controls
         If Not (TypeOf eachctl Is VScrollBar) And Not eachctl.Name = "addbt" And Not eachctl.Name = "refreshbt" And Not eachctl.Name = "buttonframe" Then
             'MsgBox eachctl.Name
-            eachctl.Top = eachctl.Top + old - VScroll1.value
+            eachctl.Top = eachctl.Top + old - VScroll1.Value
         End If
     Next
-    old = VScroll1.value
+    old = VScroll1.Value
 End Sub
 
 Private Sub addbt_Click()
@@ -111,7 +111,7 @@ End Sub
 
 Private Sub refreshbt_Click()
     postNo = 1
-    VScroll1.value = 0
+    VScroll1.Value = 0
     Dim counter As Integer
     counter = 1
     If magic = 0 Then
@@ -173,7 +173,7 @@ Private Sub refreshbt_Click()
                     End If
                     content_before = Mid$(content, 1, test_start - 1)
                     content_after = Mid$(content, test_end + 1, 33333) '??? TODO
-                    content = content_before + content_after
+                    content = content_before & content_after
                     I = I - 1
                 Loop
                 postList(counter).Nickname = username

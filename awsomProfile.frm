@@ -9,11 +9,25 @@ Begin VB.Form awsomProfile
    ScaleHeight     =   5745
    ScaleWidth      =   6300
    StartUpPosition =   3  'Windows Default
+   Begin VB.TextBox bioObj 
+      BorderStyle     =   0  'None
+      CausesValidation=   0   'False
+      Height          =   1815
+      Left            =   120
+      Locked          =   -1  'True
+      MousePointer    =   3  'I-Beam
+      MultiLine       =   -1  'True
+      ScrollBars      =   2  'Vertical
+      TabIndex        =   4
+      Top             =   1080
+      Width           =   6135
+   End
    Begin VB.CommandButton Command1 
       Caption         =   "Follow"
+      Enabled         =   0   'False
       Height          =   375
       Left            =   5160
-      TabIndex        =   4
+      TabIndex        =   3
       Top             =   120
       Width           =   1095
    End
@@ -32,14 +46,6 @@ Begin VB.Form awsomProfile
       X2              =   6120
       Y1              =   3000
       Y2              =   3000
-   End
-   Begin VB.Label bioObj 
-      Caption         =   "<unset>"
-      Height          =   1815
-      Left            =   120
-      TabIndex        =   3
-      Top             =   1080
-      Width           =   6135
    End
    Begin VB.Label usernameObj 
       Caption         =   "<unset>"
@@ -112,7 +118,7 @@ Public Function selectUser(id As String)
         End If
         content_before = Mid$(bio, 1, test_start - 1)
         content_after = Mid$(bio, test_start + 5, 33333) '??? TODO
-        bio = content_before + Chr$(32) + content_after
+        bio = content_before & vbCrLf & content_after
         I = I - 1
     Loop
 
@@ -125,9 +131,14 @@ Public Function selectUser(id As String)
         End If
         content_before = Mid$(bio, 1, test_start - 1)
         content_after = Mid$(bio, test_end + 1, 33333) '??? TODO
-        bio = content_before + content_after
+        bio = content_before & content_after
         I = I - 1
     Loop
     
-    bioObj.Caption = bio
+    bioObj.Text = bio
 End Function
+
+Private Sub Form_Load()
+    bioObj.BackColor = Me.BackColor
+    bioObj.ForeColor = Me.ForeColor
+End Sub
