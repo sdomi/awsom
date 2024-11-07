@@ -103,6 +103,16 @@ Private Sub authorImg_Click()
     awsomProfile.Show ' TODO: instantiate multiple at once
 End Sub
 
+Private Sub boostBtn_Click()
+    Set apiClient = New API
+    If apiClient.init() Then
+        apiClient.request "/api/v1/statuses/" & postId & "/reblog", " "
+    Else
+        MsgBox "Error: could not initialize API", vbCritical
+        Unload Me
+    End If
+End Sub
+
 Private Sub replyBtn_Click()
     awsomPost.reply_visibility = visibility
     awsomPost.reply_to = postId
