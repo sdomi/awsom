@@ -141,6 +141,7 @@ Private Sub refreshbt_Click()
                 End If
                 postList(counter).userId = JB.Item(counter).Item("account").Item("id")
                 postList(counter).postId = JB.Item(counter).Item("id")
+                postList(counter).visibility = JB.Item(counter).Item("visibility")
                 
                 ' TODO: improve this somewhat
                 Dim handle
