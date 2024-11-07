@@ -52,7 +52,15 @@ Public Function request(endpoint As String, Optional data As String) As String
     Dim payload As String
 
     If data <> "" Then
-        payload = "-d """ & data & """ "
+        Dim handle As Integer
+        handle = FreeFile
+        Open App.Path & "\data_in" For Output As #handle
+        Print #handle, data
+        Close #handle
+        payload = "--data @" & App.Path & "\data_in "
+        If Mid$(data, 1, 1) = "{" Then ' HACK, FIXME
+            payload = payload & " -H ""content-type: application/json"" "
+        End If
     End If
 
     Status = Shell(App.Path & "\curl.exe -k -H """ & authHeader & token & """ " & instance & endpoint & " " & payload & "-o " & App.Path & "\data", vbHide)

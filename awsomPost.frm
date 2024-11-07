@@ -35,10 +35,19 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub Command1_Click()
+    Dim payload As JsonBag
+    Set payload = New JsonBag
+    With payload
+        .Clear
+        .Item("status") = Text1.Text
+        .Item("visibility") = "direct"
+        .Item("sensitive") = False
+        .Item("spoiler_text") = ""
+    End With
     
     Set apiClient = New API
     If apiClient.init() Then
-        apiClient.request "/api/v1/statuses", "status=" & Text1.Text
+        apiClient.request "/api/v1/statuses", payload.JSON
     Else
         MsgBox "Error: could not initialize API", vbCritical
         Unload Me
