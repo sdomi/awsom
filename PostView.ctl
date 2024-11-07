@@ -64,6 +64,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Public imgPath As String ' todo hack
 Public userId As String
+Public postId As String
 
 Public Property Let content(ByVal Value As String)
     messageObj.Caption = Value
@@ -99,6 +100,16 @@ End Property
 Private Sub authorImg_Click()
     awsomProfile.selectUser userId
     awsomProfile.Show ' TODO: instantiate multiple at once
+End Sub
+
+Private Sub starBtn_Click()
+    Set apiClient = New API
+    If apiClient.init() Then
+        apiClient.request "/api/v1/statuses/" & postId & "/favourite", " "
+    Else
+        MsgBox "Error: could not initialize API", vbCritical
+        Unload Me
+    End If
 End Sub
 
 Private Sub UserControl_Resize()

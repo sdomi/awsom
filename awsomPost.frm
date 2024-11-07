@@ -38,14 +38,12 @@ Private Sub Command1_Click()
     
     Set apiClient = New API
     If apiClient.init() Then
-        apiClient.request "/api/v1/statuses"
+        apiClient.request "/api/v1/statuses", "status=" & Text1.Text
     Else
         MsgBox "Error: could not initialize API", vbCritical
         Unload Me
     End If
     
-    apiClient.request "/api/v1/statuses", "status=" & Text1.Text
-
     Unload Me
 End Sub
 

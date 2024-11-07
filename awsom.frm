@@ -89,7 +89,6 @@ Private Sub VScroll1_Change() ' hack for scrolling, basically move everything (e
     Dim eachctl As Control
     For Each eachctl In Me.Controls
         If Not (TypeOf eachctl Is VScrollBar) And Not eachctl.Name = "addbt" And Not eachctl.Name = "refreshbt" And Not eachctl.Name = "buttonframe" Then
-            'MsgBox eachctl.Name
             eachctl.Top = eachctl.Top + old - VScroll1.Value
         End If
     Next
@@ -141,6 +140,7 @@ Private Sub refreshbt_Click()
                     postList(counter).avatar = avatarPath
                 End If
                 postList(counter).userId = JB.Item(counter).Item("account").Item("id")
+                postList(counter).postId = JB.Item(counter).Item("id")
                 
                 ' TODO: improve this somewhat
                 Dim handle
