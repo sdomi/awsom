@@ -65,24 +65,24 @@ Attribute VB_Exposed = False
 Public imgPath As String ' todo hack
 Public userId As String
 
-Public Property Let content(ByVal value As String)
-    messageObj.Caption = value
+Public Property Let content(ByVal Value As String)
+    messageObj.Caption = Value
 End Property
 
 Public Property Get content() As String
     content = messageObj.Caption
 End Property
 
-Public Property Let Nickname(ByVal value As String)
-    usernameObj.Caption = value
+Public Property Let Nickname(ByVal Value As String)
+    usernameObj.Caption = Value
 End Property
 
 Public Property Get Nickname() As String
     Nickname = usernameObj.Caption
 End Property
 
-Public Property Let avatar(ByVal value As String)
-    imgPath = App.Path & value
+Public Property Let avatar(ByVal Value As String)
+    imgPath = App.Path & Value
     If Dir(imgPath) <> "" Then
         Dim pic As Image
         On Error Resume Next ' we cannot guarantee that all images won't error
@@ -99,5 +99,10 @@ End Property
 Private Sub authorImg_Click()
     awsomProfile.selectUser userId
     awsomProfile.Show ' TODO: instantiate multiple at once
+End Sub
+
+Private Sub UserControl_Resize()
+    usernameObj.Width = UserControl.Width - authorImg.Width - 150
+    messageObj.Width = UserControl.Width - 300
 End Sub
 
