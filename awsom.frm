@@ -7,15 +7,6 @@ Begin VB.Form awsom
    ClientLeft      =   60
    ClientTop       =   345
    ClientWidth     =   3915
-   BeginProperty Font 
-      Name            =   "MS UI Gothic"
-      Size            =   9
-      Charset         =   0
-      Weight          =   400
-      Underline       =   0   'False
-      Italic          =   0   'False
-      Strikethrough   =   0   'False
-   EndProperty
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False

@@ -1,25 +1,19 @@
 VERSION 5.00
 Begin VB.Form loginform 
+   BorderStyle     =   1  'Fixed Single
    Caption         =   "Sign in"
    ClientHeight    =   3240
-   ClientLeft      =   60
-   ClientTop       =   345
+   ClientLeft      =   45
+   ClientTop       =   330
    ClientWidth     =   4680
    LinkTopic       =   "Form1"
+   MaxButton       =   0   'False
+   MinButton       =   0   'False
    ScaleHeight     =   3240
    ScaleWidth      =   4680
    StartUpPosition =   3  'Windows Default
    Begin VB.CommandButton cancelbt 
       Caption         =   "Cancel"
-      BeginProperty Font 
-         Name            =   "MS UI Gothic"
-         Size            =   9
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
       Height          =   375
       Left            =   1320
       TabIndex        =   7
@@ -28,15 +22,6 @@ Begin VB.Form loginform
    End
    Begin VB.CommandButton Command1 
       Caption         =   "Save and continue"
-      BeginProperty Font 
-         Name            =   "MS UI Gothic"
-         Size            =   9
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
       Height          =   375
       Left            =   3000
       TabIndex        =   6
@@ -45,30 +30,12 @@ Begin VB.Form loginform
    End
    Begin VB.Frame Frame2 
       Caption         =   "API token"
-      BeginProperty Font 
-         Name            =   "MS UI Gothic"
-         Size            =   9
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
       Height          =   615
       Left            =   120
       TabIndex        =   3
       Top             =   1560
       Width           =   4455
       Begin VB.TextBox token 
-         BeginProperty Font 
-            Name            =   "MS UI Gothic"
-            Size            =   9
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
          Height          =   285
          Left            =   120
          TabIndex        =   4
@@ -78,30 +45,12 @@ Begin VB.Form loginform
    End
    Begin VB.Frame Frame1 
       Caption         =   "Instance (eg. niu.moe)"
-      BeginProperty Font 
-         Name            =   "MS UI Gothic"
-         Size            =   9
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
       Height          =   615
       Left            =   120
       TabIndex        =   1
       Top             =   840
       Width           =   4455
       Begin VB.TextBox instance 
-         BeginProperty Font 
-            Name            =   "MS UI Gothic"
-            Size            =   9
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
          Height          =   285
          Left            =   120
          TabIndex        =   2
@@ -110,16 +59,7 @@ Begin VB.Form loginform
       End
    End
    Begin VB.Label Label2 
-      Caption         =   "In the near future, I plan to add support for logging-in with your standard username, password and domain. Stay patient :p"
-      BeginProperty Font 
-         Name            =   "MS UI Gothic"
-         Size            =   9
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
+      Caption         =   "Some day, I plan to add support for logging in with your standard username, password and domain. TODO"
       Height          =   735
       Left            =   120
       TabIndex        =   5
@@ -127,16 +67,7 @@ Begin VB.Form loginform
       Width           =   4455
    End
    Begin VB.Label Label1 
-      Caption         =   $"loginform.frx":0000
-      BeginProperty Font 
-         Name            =   "MS UI Gothic"
-         Size            =   9
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
+      Caption         =   "It appears that this is your first time running awsom. Before continuing, you'll need to enter some details about your account in boxes below."
       Height          =   615
       Left            =   120
       TabIndex        =   0

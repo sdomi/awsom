@@ -14,15 +14,6 @@ Begin VB.Form awsomPost
    StartUpPosition =   3  'Windows Default
    Begin VB.CommandButton Command1 
       Caption         =   "Toot!"
-      BeginProperty Font 
-         Name            =   "MS UI Gothic"
-         Size            =   9
-         Charset         =   128
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
       Height          =   375
       Left            =   3120
       TabIndex        =   1
@@ -30,15 +21,6 @@ Begin VB.Form awsomPost
       Width           =   1455
    End
    Begin VB.TextBox Text1 
-      BeginProperty Font 
-         Name            =   "MS UI Gothic"
-         Size            =   9
-         Charset         =   128
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
       Height          =   2295
       Left            =   120
       MultiLine       =   -1  'True
