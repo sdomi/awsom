@@ -60,11 +60,15 @@ Private Status, hProcess As Long
 
 Public httpClient As HTTP
 Public apiClient As API
+Private context As String
 
-Public Property Let ctx(ByVal Value As String)
+Public Property Let ctx(ByVal value As String)
     buttonframe.Visible = False
     addbt.Visible = False
     refreshbt.Visible = False
+    context = value
+    
+    refreshbt_Click ' TODO
 End Property
 
 Private Sub Form_Load()
@@ -100,10 +104,10 @@ Private Sub VScroll1_Change() ' hack for scrolling, basically move everything (e
     Dim eachctl As Control
     For Each eachctl In Me.Controls
         If Not (TypeOf eachctl Is VScrollBar) And Not eachctl.Name = "addbt" And Not eachctl.Name = "refreshbt" And Not eachctl.Name = "buttonframe" Then
-            eachctl.Top = eachctl.Top + old - VScroll1.Value
+            eachctl.Top = eachctl.Top + old - VScroll1.value
         End If
     Next
-    old = VScroll1.Value
+    old = VScroll1.value
 End Sub
 
 Private Sub addbt_Click()
@@ -117,14 +121,18 @@ Private Sub refreshbt_Click()
     End If
     
     postNo = 1
-    VScroll1.Value = 0
+    VScroll1.value = 0
     Dim counter As Integer
     counter = 1
     If magic = 0 Then
         magic = 1
         Dim JB
         Set JB = New JsonBag
-        JB.JSON = apiClient.request("/api/v1/timelines/home")
+        If context = "" Then
+            JB.JSON = apiClient.request("/api/v1/timelines/home")
+        Else
+            JB.JSON = "[" & apiClient.request("/api/v1/statuses/" & context) & "]" ' HAAAAACK
+        End If
         ' TODO: if ctx is set, request /api/v1/statuses/<id> and /api/v1/statuses/<id>/context instead
         
         ' TODO: hack hack hack hack
