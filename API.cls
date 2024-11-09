@@ -18,9 +18,10 @@ Private Declare Function OpenProcess _
             ByVal dwProcessId As Long) As Long
 Private Declare Function GetExitCodeProcess Lib "kernel32" (ByVal hProcess As Long, lpexitcode As Long) As Long
 
-Dim token As String
-Dim instance As String
-Dim authHeader As String
+Private token As String
+Private instance As String
+Private authHeader As String
+Public initialized As Boolean
 
 Public Function init() As Boolean
     Dim token_, token_t, token_s, instance_, instance_t, instance_s
@@ -38,9 +39,11 @@ Public Function init() As Boolean
 
         authHeader = "Cookie: __Host-pleroma_key="
 
+        initialized = True
         init = True
     Else
         ' Config files don't exist yet, return failure
+        initialized = False
         init = False
     End If
 

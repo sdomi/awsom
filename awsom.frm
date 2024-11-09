@@ -58,10 +58,10 @@ Private alreadydefined As Boolean ' this will break stuff in the future
 Public postNo As Integer
 Private Status, hProcess As Long
 
-Private httpClient As HTTP
-Private apiClient As API
+Public httpClient As HTTP
+Public apiClient As API
 
-Public Property Let ctx(ByVal value As String)
+Public Property Let ctx(ByVal Value As String)
     buttonframe.Visible = False
     addbt.Visible = False
     refreshbt.Visible = False
@@ -78,6 +78,11 @@ Private Sub Form_Load()
     End With
     
     Set httpClient = New HTTP
+    Set apiClient = New API
+    If Not apiClient.init() Then
+        loginform.Show
+        awsom.Hide
+    End If
 End Sub
 
 Private Sub Form_Resize()
@@ -95,10 +100,10 @@ Private Sub VScroll1_Change() ' hack for scrolling, basically move everything (e
     Dim eachctl As Control
     For Each eachctl In Me.Controls
         If Not (TypeOf eachctl Is VScrollBar) And Not eachctl.Name = "addbt" And Not eachctl.Name = "refreshbt" And Not eachctl.Name = "buttonframe" Then
-            eachctl.Top = eachctl.Top + old - VScroll1.value
+            eachctl.Top = eachctl.Top + old - VScroll1.Value
         End If
     Next
-    old = VScroll1.value
+    old = VScroll1.Value
 End Sub
 
 Private Sub addbt_Click()
@@ -106,84 +111,83 @@ Private Sub addbt_Click()
 End Sub
 
 Private Sub refreshbt_Click()
+    If apiClient.initialized = False Then
+        MsgBox "Failed to initialize the API interface", vbCritical
+        Unload Me
+    End If
+    
     postNo = 1
-    VScroll1.value = 0
+    VScroll1.Value = 0
     Dim counter As Integer
     counter = 1
     If magic = 0 Then
         magic = 1
-
-        Set apiClient = New API
-        If apiClient.init() Then ' TODO: we shouldn't initialize it here, i'm just testing stuff
-            Dim JB
-            Set JB = New JsonBag
-            JB.JSON = apiClient.request("/api/v1/timelines/home")
-            ' TODO: if ctx is set, request /api/v1/statuses/<id> and /api/v1/statuses/<id>/context instead
+        Dim JB
+        Set JB = New JsonBag
+        JB.JSON = apiClient.request("/api/v1/timelines/home")
+        ' TODO: if ctx is set, request /api/v1/statuses/<id> and /api/v1/statuses/<id>/context instead
+        
+        ' TODO: hack hack hack hack
+        ' the below results in an overflow because PostView has a height of 2350 now
+        ' can we use pixels instead of twigs? if not, lazy loading it is...
+        
+        Dim amount
+        If JB.Count > 10 Then
+            amount = 10
+        Else
+            amount = JB.Count
+        End If
+        
+        newItemSet (amount)
+        alreadydefined = True
+        While amount >= counter
+            Dim username, content, avatarPath, avatar, displayName
+            username = JB.Item(counter).Item("account").Item("acct")
             
-            ' TODO: hack hack hack hack
-            ' the below results in an overflow because PostView has a height of 2350 now
-            ' can we use pixels instead of twigs? if not, lazy loading it is...
-            
-            Dim amount
-            If JB.Count > 10 Then
-                amount = 10
-            Else
-                amount = JB.Count
-            End If
-            
-            newItemSet (amount)
-            alreadydefined = True
-            While amount >= counter
-                Dim username, content, avatarPath, avatar, displayName
-                username = JB.Item(counter).Item("account").Item("acct")
-                
-                avatar = JB.Item(counter).Item("account").Item("avatar")
-                Debug.Print avatar
-                If InStr(avatar, ".jpg") <> 0 Or InStr(avatar, ".jpeg") <> 0 Then
-                    avatarPath = "\cache\" & JB.Item(counter).Item("account").Item("id") & ".jpg"
-                    If Dir(App.Path & avatarPath) = "" Then
-                        httpClient.fetch avatar, avatarPath
-                    End If
-                    postList(counter).avatar = avatarPath
+            avatar = JB.Item(counter).Item("account").Item("avatar")
+            Debug.Print avatar
+            If InStr(avatar, ".jpg") <> 0 Or InStr(avatar, ".jpeg") <> 0 Then
+                avatarPath = "\cache\" & JB.Item(counter).Item("account").Item("id") & ".jpg"
+                If Dir(App.Path & avatarPath) = "" Then
+                    httpClient.fetch avatar, avatarPath
                 End If
-                postList(counter).userId = JB.Item(counter).Item("account").Item("id")
-                postList(counter).postId = JB.Item(counter).Item("id")
-                postList(counter).visibility = JB.Item(counter).Item("visibility")
-                
-                ' TODO: improve this somewhat
-                Dim handle
-                handle = FreeFile
-                Open App.Path & "\cache\" & JB.Item(counter).Item("account").Item("id") & ".json" For Output As #handle
-                Print #handle, JB.Item(counter).Item("account").JSON
-                Close #handle
-
-                content = JB.Item(counter).Item("content")
-                Dim test_start As Long
-                Dim test_end As Long
-                Dim content_before, content_after
+                postList(counter).avatar = avatarPath
+            End If
+            postList(counter).userId = JB.Item(counter).Item("account").Item("id")
+            postList(counter).postId = JB.Item(counter).Item("id")
+            postList(counter).visibility = JB.Item(counter).Item("visibility")
             
-                Dim I
-                I = 100
-                Do While I > 0
-                    test_start = InStr(content, "<")
-                    test_end = InStr(content, ">")
-                    If test_start = 0 Or test_end = 0 Then
-                        Exit Do
-                    End If
-                    content_before = Mid$(content, 1, test_start - 1)
-                    content_after = Mid$(content, test_end + 1, 33333) '??? TODO
-                    content = content_before & content_after
-                    I = I - 1
-                Loop
-                postList(counter).Nickname = username
-                postList(counter).displayName = JB.Item(counter).Item("account").Item("display_name")
-                postList(counter).content = content
-                counter = counter + 1
-            Wend
-    Else
-        loginform.Show
-        awsom.Hide
-    End If
+            ' TODO: improve this somewhat
+            Dim handle
+            handle = FreeFile
+            Open App.Path & "\cache\" & JB.Item(counter).Item("account").Item("id") & ".json" For Output As #handle
+            Print #handle, JB.Item(counter).Item("account").JSON
+            Close #handle
+
+            content = JB.Item(counter).Item("content")
+            Dim test_start As Long
+            Dim test_end As Long
+            Dim content_before, content_after
+        
+            Dim I
+            I = 100
+            Do While I > 0
+                test_start = InStr(content, "<")
+                test_end = InStr(content, ">")
+                If test_start = 0 Or test_end = 0 Then
+                    Exit Do
+                End If
+                content_before = Mid$(content, 1, test_start - 1)
+                content_after = Mid$(content, test_end + 1, 33333) '??? TODO
+                content = content_before & content_after
+                I = I - 1
+            Loop
+            postList(counter).Nickname = username
+            postList(counter).displayName = JB.Item(counter).Item("account").Item("display_name")
+            postList(counter).content = content
+            counter = counter + 1
+        Wend
+
 
 'test_image = InStr(content, "<a href=")  ' basically move this to the end
 'test_image_end = InStr(content, """ ")   ' and add magic through parsing
@@ -193,7 +197,7 @@ Private Sub refreshbt_Click()
 'End If
 
     magic = 0
-  End If
+    End If
 End Sub
 
 Sub newItemSet(loops As Integer)

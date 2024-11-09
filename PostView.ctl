@@ -83,32 +83,32 @@ Public userId As String
 Public postId As String
 Public visibility As String
 
-Public Property Let content(ByVal value As String)
-    messageObj.Caption = value
+Public Property Let content(ByVal Value As String)
+    messageObj.Caption = Value
 End Property
 
 Public Property Get content() As String
     content = messageObj.Caption
 End Property
 
-Public Property Let displayName(ByVal value As String)
-    displayNameObj.Caption = value
+Public Property Let displayName(ByVal Value As String)
+    displayNameObj.Caption = Value
 End Property
 
 Public Property Get displayName() As String
     displayName = displayNameObj.Caption
 End Property
 
-Public Property Let Nickname(ByVal value As String)
-    usernameObj.Caption = value
+Public Property Let Nickname(ByVal Value As String)
+    usernameObj.Caption = Value
 End Property
 
 Public Property Get Nickname() As String
     Nickname = usernameObj.Caption
 End Property
 
-Public Property Let avatar(ByVal value As String)
-    imgPath = App.Path & value
+Public Property Let avatar(ByVal Value As String)
+    imgPath = App.Path & Value
     If Dir(imgPath) <> "" Then
         Dim pic As Image
         On Error Resume Next ' we cannot guarantee that all images won't error
@@ -122,9 +122,21 @@ Public Property Let avatar(ByVal value As String)
     End If
 End Property
 
-Private Sub authorImg_Click()
+Private Sub openProfile()
     awsomProfile.selectUser userId
     awsomProfile.Show ' TODO: instantiate multiple at once
+End Sub
+
+Private Sub authorImg_Click()
+    openProfile
+End Sub
+
+Private Sub displayNameObj_Click()
+    openProfile
+End Sub
+
+Private Sub usernameObj_Click()
+    openProfile
 End Sub
 
 Private Sub boostBtn_Click()

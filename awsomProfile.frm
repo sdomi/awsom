@@ -150,6 +150,8 @@ Private Sub Form_Load()
 End Sub
 
 Private Sub Form_Resize()
+    On Error Resume Next ' TODO: we can't guarantee that all of those values will be higher than 0
+
     postListScroll.Left = Me.Width - postListScroll.Width - 100
     postListScroll.Height = Me.Height - profileLine.Y1 - 420
     profileLine.X2 = Me.Width - 300
