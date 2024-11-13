@@ -11,12 +11,14 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+#If mshttp <> 1 Then
 Private Declare Function OpenProcess _
             Lib "kernel32" _
             (ByVal dwDesiredAccess As Long, _
             ByVal bInheritHandle As Long, _
             ByVal dwProcessId As Long) As Long
 Private Declare Function GetExitCodeProcess Lib "kernel32" (ByVal hProcess As Long, lpexitcode As Long) As Long
+#End If
 
 Private token As String
 Private instance As String
@@ -35,7 +37,7 @@ Public Function init() As Boolean
         Set instance_ = CreateObject("Scripting.FileSystemObject")
         Set instance_t = instance_.GetFile(App.Path & "\instance.txt")
         Set instance_s = instance_t.OpenAsTextStream(1, -2)
-        instance = "https://" & instance_s.ReadLine & "/"
+        instance = instance_s.ReadLine & "/"
 
         authHeader = "Cookie: __Host-pleroma_key="
 
@@ -49,6 +51,7 @@ Public Function init() As Boolean
 
 End Function
 
+#If mshttp <> 1 Then
 Public Function request(endpoint As String, Optional data As String) As String
     ' TODO: do we want separate functions for different methods? TBD
     ' TODO: unfuck the CA bundle
@@ -82,3 +85,29 @@ Public Function request(endpoint As String, Optional data As String) As String
     data_api_readfile.Close
 
 End Function
+
+#Else
+Public Function request(endpoint As String, Optional data As String) As String
+    Dim objReq, method As String
+    Set objReq = CreateObject("Microsoft.XMLHTTP")
+    
+    If data <> "" Then
+        method = "POST"
+    Else
+        method = "GET"
+    End If
+    
+    objReq.Open method, instance & endpoint, False
+    objReq.setRequestHeader "Authorization", "Bearer: " & token
+    If method = "POST" Then
+        objReq.setRequestHeader "content-type", "application/json"
+        objReq.Send data
+    Else
+        objReq.Send ""
+    End If
+    
+    Debug.Print objReq.ResponseBody
+    Debug.Print objReq.ResponseText
+    request = objReq.ResponseText
+End Function
+#End If

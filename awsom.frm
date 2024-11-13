@@ -131,7 +131,11 @@ Private Sub refreshbt_Click()
         If context = "" Then
             JB.JSON = apiClient.request("/api/v1/timelines/home")
         Else
+            Dim context_response As JsonBag
+            Set context_response = New JsonBag
+            context_response.JSON = apiClient.request("/api/v1/statuses/" & context & "/context")
             JB.JSON = "[" & apiClient.request("/api/v1/statuses/" & context) & "]" ' HAAAAACK
+            Debug.Print JB.JSON
         End If
         ' TODO: if ctx is set, request /api/v1/statuses/<id> and /api/v1/statuses/<id>/context instead
         
